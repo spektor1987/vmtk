@@ -100,6 +100,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         self.ContourWidget.Initialize()
 
     def InteractCallback(self, obj):
+        # BUG: enable the widget, but immediately after it is disabled again
         if self.ContourWidget.GetEnabled() == 1:
             self.ContourWidget.SetEnabled(0)
         else:
@@ -154,15 +155,19 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         pointPlacer = vtk.vtkPolygonalSurfacePointPlacer()
         pointPlacer.AddProp(self.Actor)
         pointPlacer.GetPolys().AddItem(self.Surface)
+        pointPlacer.SnapToClosestPointOn()
         rep.SetPointPlacer(pointPlacer)
 
         self.Interpolator = vtk.vtkPolygonalSurfaceContourLineInterpolator()
         self.Interpolator.GetPolys().AddItem(self.Surface)
         rep.SetLineInterpolator(self.Interpolator)
 
+        self.ContourWidget.EnabledOn()
+        self.InputInfo("Drawing contour ...\n")
+
         self.vmtkRenderer.AddKeyBinding('space','Generate scalars',self.ScalarsCallback)
         self.vmtkRenderer.AddKeyBinding('d','Delete contour',self.DeleteContourCallback)
-        self.vmtkRenderer.AddKeyBinding('i','Start interaction',self.InteractCallback)
+        #self.vmtkRenderer.AddKeyBinding('i','Start interaction',self.InteractCallback)
         self.Display()
 
         if self.OwnRenderer:
