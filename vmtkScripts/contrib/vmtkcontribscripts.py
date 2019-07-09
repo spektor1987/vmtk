@@ -22,6 +22,7 @@ __all__ = [
     'vmtk.vmtknumpytosurface',
     'vmtk.vmtknumpywriter',
     'vmtk.vmtksurfaceconnector',
+    'vmtk.vmtksurfaceharmonicextension',
     'vmtk.vmtksurfaceharmonicsections',
     'vmtk.vmtksurfaceextractinnercylinder',
     'vmtk.vmtksurfaceresolution',
