@@ -11,6 +11,7 @@ __all__ = [
     'vmtk.vmtkmeshaddexternallayer',
     'vmtk.vmtkmeshclipcenterlines',
     'vmtk.vmtkmeshmerge',
+    'vmtk.vmtkmeshtethex',
     'vmtk.vmtkmeshtetrahedralize2',
     'vmtk.vmtkmeshtonumpy',
     'vmtk.vmtkmeshviewer2',
