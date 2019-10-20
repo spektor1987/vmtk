@@ -10,6 +10,7 @@ __all__ = [
     'vmtk.vmtkimagetonumpy',
     'vmtk.vmtkmeshaddexternallayer',
     'vmtk.vmtkmeshclipcenterlines',
+    'vmtk.vmtkmeshinfo',
     'vmtk.vmtkmeshmerge',
     'vmtk.vmtkmeshtethex',
     'vmtk.vmtkmeshtetrahedralize2',
