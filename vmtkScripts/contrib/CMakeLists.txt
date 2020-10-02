@@ -22,6 +22,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtknumpytomesh.py
     vmtknumpytosurface.py
     vmtknumpywriter.py
+    vmtksurfacebooleanconnector.py
     vmtksurfaceconnector.py
     vmtksurfacefeatureedges.py
     vmtksurfaceharmonicconnector.py

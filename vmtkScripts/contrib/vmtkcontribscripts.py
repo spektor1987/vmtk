@@ -24,6 +24,7 @@ __all__ = [
     'vmtk.vmtknumpytomesh',
     'vmtk.vmtknumpytosurface',
     'vmtk.vmtknumpywriter',
+    'vmtk.vmtksurfacebooleanconnector',
     'vmtk.vmtksurfaceconnector',
     'vmtk.vmtksurfacefeatureedges',
     'vmtk.vmtksurfaceharmonicconnector',
