@@ -12,6 +12,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
     vmtkmeshconnector.py
+    vmtkmeshconnectorfsi.py
     vmtkmeshclipcenterlines.py
     vmtkmeshinfo.py
     vmtkmeshmerge.py
@@ -42,7 +43,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfaceextractinnercylinder.py
     vmtkthreshold.py
   )
-  
+
 set(CONTRIB_MODULE_SRCS
   vmtkcontribscripts.py
   )
@@ -77,4 +78,3 @@ install(PROGRAMS ${CONTRIB_STRIPPED_SCRIPTS_SRCS}
   COMPONENT RuntimeExecutables)
 
 endif (NOT WIN32 AND NOT VMTK_MINIMAL_INSTALL)
-
