@@ -34,6 +34,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfaceharmonicextension.py
     vmtksurfaceharmonicsections.py
     vmtksurfaceharmonicsolver.py
+    vmtksurfaceremeshingramp.py
     vmtksurfaceresolution.py
     vmtksurfacetagger.py
     vmtksurfacethickening.py
