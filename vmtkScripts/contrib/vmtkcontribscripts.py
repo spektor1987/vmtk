@@ -11,6 +11,7 @@ __all__ = [
     'vmtk.vmtkgeodesicsurfaceresolution',
     'vmtk.vmtkimagetonumpy',
     'vmtk.vmtkmeshaddexternallayer',
+    'vmtk.vmtkmeshcapper',
     'vmtk.vmtkmeshclipcenterlines',
     'vmtk.vmtkmeshconnector',
     'vmtk.vmtkmeshinfo',
