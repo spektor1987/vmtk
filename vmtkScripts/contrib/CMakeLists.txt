@@ -15,6 +15,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkmeshconnector.py
     vmtkmeshclipcenterlines.py
     vmtkmeshinfo.py
+    vmtkmeshinternalfacescleaner.py
     vmtkmeshmerge.py
     vmtkmeshringgenerator.py
     vmtkmeshtethex.py
