@@ -11,11 +11,14 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkgeodesicsurfaceresolution.py
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
+    vmtkmeshcapper.py
     vmtkmeshconnector.py
     vmtkmeshconnectorfsi.py
     vmtkmeshclipcenterlines.py
     vmtkmeshinfo.py
+    vmtkmeshinternalfacescleaner.py
     vmtkmeshmerge.py
+    vmtkmeshringgenerator.py
     vmtkmeshtethex.py
     vmtkmeshtetrahedralize2.py
     vmtkmeshtonumpy.py

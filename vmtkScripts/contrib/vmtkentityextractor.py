@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## Program:   VMTK
-## Module:    $RCSfile: vmtksurfaceappend.py,v $
+## Module:    $RCSfile: vmtkentityextractor.py,v $
 ## Language:  Python
 ## Date:      $Date: 2020/10/22 14:18:14 $
 ## Version:   $Revision: 1.4 $
@@ -33,8 +33,9 @@ class vmtkEntityExtractor(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Mesh = None
+        self.DeletedMesh = None
         self.Surface = None
-        self.Input = None
+        self.DeletedSurface = None
         self.EntityIds = []
         self.Invert = 0
         self.CellEntityIdsArrayName = 'CellEntityIds'
@@ -54,7 +55,9 @@ class vmtkEntityExtractor(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
+            ['DeletedMesh','deleted','vtkUnstructuredGrid',1,'','the deleted part of the input mesh','vmtkmeshwriter'],
             ['Surface','osurface','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['DeletedSurface','deletedsurface','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['OutputEntityIds','oids','int',-1,'','the list of ids of the output surface/mesh'],
             ])
 
@@ -105,27 +108,44 @@ class vmtkEntityExtractor(pypes.pypeScript):
 
         self.CellEntityIdsArray = idList.CellEntityIdsArray
 
+        if isinstance(self.EntityIds, int):
+            self.EntityIds = [self.EntityIds]
+
         if self.Invert:
             self.OutputEntityIds = sorted(set(idList.EntityIds).difference(self.EntityIds))
         else:
             self.OutputEntityIds = self.EntityIds
 
         if self.Surface: # input is a surface
-            appender = vtk.vtkAppendPolyData()
+            extract = vtk.vtkAppendPolyData()
+            delete = vtk.vtkAppendPolyData()
         else: # input is a mesh
-            appender = vtk.vtkAppendFilter()
-            appender.MergePointsOn()
-        for item in self.OutputEntityIds:
-            appender.AddInputData(self.Threshold(item))
-        appender.Update()
+            extract = vtk.vtkAppendFilter()
+            extract.MergePointsOn()
+            delete = vtk.vtkAppendFilter()
+            delete.MergePointsOn()
+        for item in idList.EntityIds:
+            if item in self.OutputEntityIds:
+                extract.AddInputData(self.Threshold(item))
+            else:
+                delete.AddInputData(self.Threshold(item))
+        extract.Update()
+        delete.Update()
         
         if self.Surface:
             cleaner = vtk.vtkCleanPolyData()
-            cleaner.SetInputConnection(appender.GetOutputPort())
+            cleaner.SetInputConnection(extract.GetOutputPort())
             cleaner.Update()
             self.Surface = cleaner.GetOutput()
+
+            cleaner = vtk.vtkCleanPolyData()
+            cleaner.SetInputConnection(delete.GetOutputPort())
+            cleaner.Update()
+            self.DeletedSurface = cleaner.GetOutput()
+
         else:
-            self.Mesh = appender.GetOutput()
+            self.Mesh = extract.GetOutput()
+            self.DeletedMesh = delete.GetOutput()
 
 
 

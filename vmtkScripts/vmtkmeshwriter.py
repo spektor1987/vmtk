@@ -306,10 +306,10 @@ class vmtkMeshWriter(pypes.pypeScript):
 #            writer.SetBoundaryDataIdOffset(self.CellEntityIdsOffset)
         writer.Write()
 
-    def WriteHexMshFile(self):
+    def WriteDealiiMshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
-        self.PrintLog('Writing Hex Msh file.')
+        self.PrintLog('Writing dealii/lifex .msh file.')
 
         self.Mesh.BuildLinks()
 
@@ -317,7 +317,9 @@ class vmtkMeshWriter(pypes.pypeScript):
         cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
 
         lineCellType = vtk.vtkLine().GetCellType()
+        triaCellType = vtk.vtkTriangle().GetCellType()
         quadCellType = vtk.vtkQuad().GetCellType()
+        tetraCellType = vtk.vtkTetra().GetCellType()
         hexaCellType = vtk.vtkHexahedron().GetCellType()
 
         f=open(self.OutputFileName, 'w')
@@ -338,49 +340,50 @@ class vmtkMeshWriter(pypes.pypeScript):
         lineCellIdArray = vtk.vtkIdTypeArray()
         self.Mesh.GetIdsOfCellsOfType(lineCellType,lineCellIdArray)
 
+        triaCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(triaCellType,triaCellIdArray)
+
         quadCellIdArray = vtk.vtkIdTypeArray()
         self.Mesh.GetIdsOfCellsOfType(quadCellType,quadCellIdArray)
+
+        tetraCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray)
 
         hexaCellIdArray = vtk.vtkIdTypeArray()
         self.Mesh.GetIdsOfCellsOfType(hexaCellType,hexaCellIdArray)
 
-        numberOfLine = lineCellIdArray.GetNumberOfTuples()
-        numberOfQuad = quadCellIdArray.GetNumberOfTuples()
-        numberOfHexa = hexaCellIdArray.GetNumberOfTuples()
+        numberOfLines = lineCellIdArray.GetNumberOfTuples()
+        numberOfTrias = triaCellIdArray.GetNumberOfTuples()
+        numberOfQuads = quadCellIdArray.GetNumberOfTuples()
+        numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
+        numberOfHexas = hexaCellIdArray.GetNumberOfTuples()
 
-        line += "%d\n" % (numberOfLine+numberOfQuad+numberOfHexa)
+        line += "%d\n" % (numberOfLines+numberOfTrias+numberOfQuads+numberOfTetras+numberOfHexas)
         f.write(line)
 
-        def writeLine(cellId,cellType,tag,cellPointIds):
-            line = '%d ' % (cellId)
-            line += cellType+' 2 %d %d ' % (tag,tag)
-            for j in range(cellPointIds.GetNumberOfIds()):
-                if j>0:
-                    line += '  '
-                line += "%d" % (cellPointIds.GetId(j)+1)
-            line += "\n"
-            f.write(line)
+        def writeCellOfType(cellType,cellTypeIdArray,idx_init):
+            idx = idx_init
+            for i in range(cellTypeIdArray.GetNumberOfTuples()):
+                cellId = cellTypeIdArray.GetValue(i)
+                cellPointIds = self.Mesh.GetCell(cellId).GetPointIds()
+                cellEntityId = cellEntityIdsArray.GetValue(cellId)
+                line = '%d ' % (idx)
+                line += cellType+' 2 %d %d ' % (cellEntityId,cellEntityId)
+                for j in range(cellPointIds.GetNumberOfIds()):
+                    if j>0:
+                        line += '  '
+                    line += "%d" % (cellPointIds.GetId(j)+1)
+                line += "\n"
+                f.write(line)
+                idx = idx+1
+            return idx
 
-        for i in range(numberOfLine):
-            lineCellId = lineCellIdArray.GetValue(i)
-            cellPointIds = self.Mesh.GetCell(lineCellId).GetPointIds()
-            cellEntityId = cellEntityIdsArray.GetValue(lineCellId)
-            idx = i+1
-            writeLine(idx,'1',cellEntityId,cellPointIds)
-
-        for i in range(numberOfQuad):
-            quadCellId = quadCellIdArray.GetValue(i)
-            cellPointIds = self.Mesh.GetCell(quadCellId).GetPointIds()
-            cellEntityId = cellEntityIdsArray.GetValue(quadCellId)
-            idx = numberOfLine+i+1
-            writeLine(idx,'3',cellEntityId,cellPointIds)
-
-        for i in range(numberOfHexa):
-            hexaCellId = hexaCellIdArray.GetValue(i)
-            cellPointIds = self.Mesh.GetCell(hexaCellId).GetPointIds()
-            cellEntityId = cellEntityIdsArray.GetValue(hexaCellId)
-            idx = numberOfLine+numberOfQuad+i+1
-            writeLine(idx,'5',cellEntityId,cellPointIds)
+        idx=1
+        idx=writeCellOfType('1',lineCellIdArray,idx)
+        idx=writeCellOfType('2',triaCellIdArray,idx)
+        idx=writeCellOfType('3',quadCellIdArray,idx)
+        idx=writeCellOfType('4',tetraCellIdArray,idx)
+        idx=writeCellOfType('5',hexaCellIdArray,idx)
 
         line = "$EndElements\n"
         f.write(line)
@@ -477,14 +480,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         elif (self.Format == 'pointdata'):
             self.WritePointDataMeshFile()
         elif (self.Format == 'dealii' or self.Format == 'lifex'):
-            quadIdArray = vtk.vtkIdTypeArray()
-            hexaIdArray = vtk.vtkIdTypeArray()
-            self.Mesh.GetIdsOfCellsOfType(9,quadIdArray)
-            self.Mesh.GetIdsOfCellsOfType(12,hexaIdArray)
-            if quadIdArray.GetNumberOfTuples()>0 or hexaIdArray.GetNumberOfTuples()>0:
-                self.WriteHexMshFile()
-            else:
-                self.PrintError('Error: dealii/lifex writer works only with quad/hexahedral meshes, use vmtkmeshtethex.')
+            self.WriteDealiiMshFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 
