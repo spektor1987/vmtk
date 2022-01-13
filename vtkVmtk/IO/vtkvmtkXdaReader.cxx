@@ -49,28 +49,24 @@ vtkvmtkXdaReader::~vtkvmtkXdaReader()
     }
 }
 
-int vtkvmtkXdaReader::RequestData(
-  vtkInformation *request,
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+int vtkvmtkXdaReader::ReadMeshSimple(const std::string& fname,
+                                       vtkDataObject* doOutput)
 {
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
-    {
-    return 1;
-    }
+  vtkDebugMacro(<<"Reading Xda file...");
 
-  if (!this->GetFileName())
-    {
-    vtkErrorMacro(<<"FileName not set.");
+  vtkUnstructuredGrid* output = vtkUnstructuredGrid::SafeDownCast(doOutput);
+
+  if(fname.empty())
+  {
+    vtkErrorMacro(<<"Input filename not set");
     return 1;
-    }
+  }
   
   return 1;
 }
 
-void vtkvmtkXdaReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkXdaReader::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkUnstructuredGridReader::PrintSelf(os,indent);
 }

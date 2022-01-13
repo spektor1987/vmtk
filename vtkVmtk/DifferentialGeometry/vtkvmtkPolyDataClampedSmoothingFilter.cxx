@@ -56,7 +56,8 @@ vtkvmtkPolyDataClampedSmoothingFilter::~vtkvmtkPolyDataClampedSmoothingFilter()
 double vtkvmtkPolyDataClampedSmoothingFilter::ComputeTimeStep(vtkPolyData* surface)
 {
   int numberOfCells = surface->GetNumberOfCells();
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   double point0[3], point1[3], point2[3];
   double minTriangleArea = 1E20;
   for (int i=0; i<numberOfCells; i++)
@@ -152,11 +153,7 @@ void vtkvmtkPolyDataClampedSmoothingFilter::CurvatureDiffusionIteration(vtkPolyD
   vtkDataArray* clampArray = surface->GetPointData()->GetArray(this->ClampArrayName);
 
   vtkPolyDataNormals* normalsFilter = vtkPolyDataNormals::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  normalsFilter->SetInput(surface);
-#else
   normalsFilter->SetInputData(surface);
-#endif
   normalsFilter->FlipNormalsOff();
   normalsFilter->ConsistencyOn();
   normalsFilter->ComputePointNormalsOn();
@@ -165,11 +162,7 @@ void vtkvmtkPolyDataClampedSmoothingFilter::CurvatureDiffusionIteration(vtkPolyD
   vtkDataArray* normals = normalsFilter->GetOutput()->GetPointData()->GetNormals();
 
   vtkCurvatures* curvaturesFilter = vtkCurvatures::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  curvaturesFilter->SetInput(surface);
-#else
   curvaturesFilter->SetInputData(surface);
-#endif
 //  curvaturesFilter->InvertMeanCurvatureOn();
   curvaturesFilter->SetCurvatureTypeToMean();
   curvaturesFilter->Update();
@@ -292,7 +285,7 @@ int vtkvmtkPolyDataClampedSmoothingFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataClampedSmoothingFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataClampedSmoothingFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

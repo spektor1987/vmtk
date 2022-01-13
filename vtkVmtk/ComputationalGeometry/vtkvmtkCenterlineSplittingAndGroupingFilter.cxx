@@ -168,11 +168,7 @@ int vtkvmtkCenterlineSplittingAndGroupingFilter::RequestData(
     this->ComputeCenterlineSplitting(input,i);
     vtkPolyData* splitCenterline = vtkPolyData::New();
     this->SplitCenterline(input,i,this->NumberOfSplittingPoints,this->SubIds,this->PCoords,this->TractBlanking,splitCenterline);
-#if (VTK_MAJOR_VERSION <= 5)
-    appendCenterlinesFilter->AddInput(splitCenterline);
-#else
     appendCenterlinesFilter->AddInputData(splitCenterline);
-#endif
     splitCenterline->Delete();
     }
   
@@ -815,7 +811,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
   blankingArray->Delete();
 }
 
-void vtkvmtkCenterlineSplittingAndGroupingFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineSplittingAndGroupingFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

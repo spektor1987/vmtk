@@ -27,6 +27,7 @@ Version:   $Revision: 1.6 $
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkPolyLine.h"
+#include "vtkIdTypeArray.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkInformation.h"
@@ -102,11 +103,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  boundaryExtractor->SetInput(input);
-#else
   boundaryExtractor->SetInputData(input);
-#endif
   boundaryExtractor->Update();
 
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
@@ -361,7 +358,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   return 1;
 }
 
-void vtkvmtkAnnularCapPolyData::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkAnnularCapPolyData::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

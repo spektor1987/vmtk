@@ -8,6 +8,7 @@ __all__ = [
     'vmtk.vmtkentityextractor',
     'vmtk.vmtkentitylist',
     'vmtk.vmtkentityrenumber',
+    'vmtk.vmtkendpointsections',
     'vmtk.vmtkgeodesicsurfaceresolution',
     'vmtk.vmtkimagetonumpy',
     'vmtk.vmtkmeshaddexternallayer',
@@ -43,8 +44,10 @@ __all__ = [
     'vmtk.vmtksurfacetonumpy',
     'vmtk.vmtksurfacewriter2',
     'vmtk.vmtkthreshold',
+    'vmtk.vmtkpeterresurface',
+    'vmtk.vmtkpetergeneratesurface',
+    'vmtk.vmtkpetersurfaceclipper'
     ]
 
 for item in __all__:
         exec('from '+item+' import *')
-

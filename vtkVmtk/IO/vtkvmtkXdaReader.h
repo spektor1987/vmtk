@@ -33,21 +33,27 @@ Version:   $Revision: 1.3 $
 class vtkCell;
 class vtkIdList;
 
+// VTK_FILEPATH hint was introduced in VTK_VERSION_CHECK(9,1,0)
+// (https://github.com/Kitware/VTK/commit/c30ddf9a6caedd65ae316080b0efd1833983844e)
+#ifndef VTK_FILEPATH
+#define VTK_FILEPATH
+#endif
+
 class VTK_VMTK_IO_EXPORT vtkvmtkXdaReader : public vtkUnstructuredGridReader
 {
 public:
   static vtkvmtkXdaReader *New();
   vtkTypeMacro(vtkvmtkXdaReader,vtkUnstructuredGridReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
 
+  int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
+
 protected:
   vtkvmtkXdaReader();
   ~vtkvmtkXdaReader();
-
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   static void GetLibmeshConnectivity(int cellType, vtkIdList* libmeshConnectivity);
 

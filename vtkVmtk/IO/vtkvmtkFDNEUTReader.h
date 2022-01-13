@@ -30,11 +30,17 @@ Version:   $Revision: 1.6 $
 #include "vtkvmtkWin32Header.h"
 #include "vtkUnstructuredGridReader.h"
 
+// VTK_FILEPATH hint was introduced in VTK_VERSION_CHECK(9,1,0)
+// (https://github.com/Kitware/VTK/commit/c30ddf9a6caedd65ae316080b0efd1833983844e)
+#ifndef VTK_FILEPATH
+#define VTK_FILEPATH
+#endif
+
 class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
 {
   public:
   vtkTypeMacro(vtkvmtkFDNEUTReader,vtkUnstructuredGridReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkFDNEUTReader *New();
 
@@ -48,6 +54,8 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
   vtkSetMacro(VolumeElementsOnly,int);
   vtkGetMacro(VolumeElementsOnly,int);
   vtkBooleanMacro(VolumeElementsOnly,int);
+
+  int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
 
   //BTX
   enum
@@ -64,8 +72,6 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
   protected:
   vtkvmtkFDNEUTReader();
   ~vtkvmtkFDNEUTReader();
-
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   static void OneToZeroOffset(int npts, int* pts)
   { for (int i=0; i<npts; i++) --pts[i]; }

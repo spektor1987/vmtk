@@ -106,8 +106,9 @@ void vtkvmtkNonManifoldFastMarching::InitPropagation(vtkPolyData* input)
 {
   vtkIdType i, j, k, l;
   vtkIdType pointId;
-  vtkIdType npts, *pts, *cells;
-  unsigned short ncells;
+  vtkIdType npts, *cells;
+  const vtkIdType *pts;
+  vtkIdType ncells;
   vtkIdType intersectedEdge[2];
   vtkDataArray* initializationArray, *costFunctionArray, *intersectedEdgesArray;
   vtkIdList* neighborCells;
@@ -254,8 +255,9 @@ void vtkvmtkNonManifoldFastMarching::InitPropagation(vtkPolyData* input)
 void vtkvmtkNonManifoldFastMarching::GetNeighbors(vtkPolyData* input, vtkIdType pointId, vtkIdList* neighborIds)
 {
   vtkIdType i, j;
-  vtkIdType npts, *pts, *cells;
-  unsigned short ncells;
+  vtkIdType npts, *cells;
+  const vtkIdType *pts;
+  vtkIdType ncells;
 
   input->GetPointCells(pointId,ncells,cells);
   for (i=0; i<ncells; i++)
@@ -533,7 +535,8 @@ double vtkvmtkNonManifoldFastMarching::ComputeUpdateFromCellNeighbor(vtkPolyData
 void vtkvmtkNonManifoldFastMarching::UpdateNeighbor(vtkPolyData* input, vtkIdType neighborId)
 {
   vtkIdType i, j, k;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkIdType trianglePts[3];
   double tMin, tScalar;
   vtkIdList* neighborCellNeighborIds;
@@ -782,7 +785,7 @@ int vtkvmtkNonManifoldFastMarching::RequestData(
   return 1;
 }
 
-void vtkvmtkNonManifoldFastMarching::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkNonManifoldFastMarching::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

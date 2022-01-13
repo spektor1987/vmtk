@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -35,7 +35,7 @@ class vmtkSurfaceReader(pypes.pypeScript):
         self.SetScriptName('vmtksurfacereader')
         self.SetScriptDoc('read a surface and store it in a vtkPolyData object')
         self.SetInputMembers([
-            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","tecplot"]','file format'],
+            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","tecplot", "wavefront", "vtm"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Surface','i','vtkPolyData',1,'','the input surface'],
             ['InputFileName','ifile','str',1,'','input file name']
@@ -49,6 +49,15 @@ class vmtkSurfaceReader(pypes.pypeScript):
             self.PrintError('Error: no InputFileName.')
         self.PrintLog('Reading VTK surface file.')
         reader = vtk.vtkPolyDataReader()
+        reader.SetFileName(self.InputFileName)
+        reader.Update()
+        self.Surface = reader.GetOutput()
+
+    def ReadVTKXMLMultiBlockDataFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading MultiBlockData File.')
+        reader = vtk.vtkXMLMultiBlockDataReader()
         reader.SetFileName(self.InputFileName)
         reader.Update()
         self.Surface = reader.GetOutput()
@@ -179,6 +188,15 @@ class vmtkSurfaceReader(pypes.pypeScript):
 ##             cellIds.InsertNextId(int(splitLine[2])-1)
 ##             cells.InsertNextCell(cellIds)
 
+    def ReadOBJSurfaceFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading wavefront surface file.')
+        reader = vtk.vtkOBJReader()
+        reader.SetFileName(self.InputFileName)
+        reader.Update()
+        self.Surface = reader.GetOutput()
+
     def Execute(self):
 
         extensionFormats = {'vtp':'vtkxml',
@@ -187,7 +205,9 @@ class vmtkSurfaceReader(pypes.pypeScript):
                             'stl':'stl',
                             'ply':'ply',
                             'tec':'tecplot',
-                            'dat':'tecplot'}
+                            'dat':'tecplot',
+                            'obj':'wavefront',
+                            'vtm':'vtm'}
 
         if self.InputFileName == 'BROWSER':
             import tkinter.filedialog
@@ -200,7 +220,7 @@ class vmtkSurfaceReader(pypes.pypeScript):
 
         if self.GuessFormat and self.InputFileName and not self.Format:
             import os.path
-            extension = os.path.splitext(self.InputFileName)[1]
+            extension = os.path.splitext(self.InputFileName)[1].lower()
             if extension:
                 extension = extension[1:]
                 if extension in list(extensionFormats.keys()):
@@ -216,6 +236,10 @@ class vmtkSurfaceReader(pypes.pypeScript):
             self.ReadPLYSurfaceFile()
         elif (self.Format == 'tecplot'):
             self.ReadTecplotSurfaceFile()
+        elif (self.Format == 'wavefront'):
+            self.ReadOBJSurfaceFile()
+        elif (self.Format == 'vtm'):
+            self.ReadVTKXMLMultiBlockDataFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 

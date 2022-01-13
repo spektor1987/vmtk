@@ -38,49 +38,25 @@ Language:  C++
 #include "vtkvmtkWin32Header.h"
 #include "vtkVersion.h"
 
-#if (VTK_MAJOR_VERSION <= 5)
-#include "vtkAbstractInterpolatedVelocityField.h"
-#else
 #include "vtkInterpolatedVelocityField.h"
-#endif
 
 class vtkTable;
-#if (VTK_MAJOR_VERSION > 5)
 class vtkAbstractInterpolatedVelocityFieldDataSetsType;
-#endif
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkStaticTemporalInterpolatedVelocityField
-#if (VTK_MAJOR_VERSION <= 5)
-  : public vtkAbstractInterpolatedVelocityField
-#else
   : public vtkInterpolatedVelocityField
-#endif
 {
 public:
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkTypeMacro( vtkvmtkStaticTemporalInterpolatedVelocityField,
-                        vtkAbstractInterpolatedVelocityField );
-#else
   vtkTypeMacro( vtkvmtkStaticTemporalInterpolatedVelocityField,
                       vtkInterpolatedVelocityField );
 
-#endif
-  void PrintSelf( ostream & os, vtkIndent indent ) VTK_OVERRIDE;
+  void PrintSelf( std::ostream & os, vtkIndent indent ) override;
 
   // Description:
   // Construct a vtkvmtkStaticTemporalInterpolatedVelocityField without an initial dataset.
   // Caching is set on and LastCellId is set to -1.
   static vtkvmtkStaticTemporalInterpolatedVelocityField * New();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  // Description:
-  // Add a dataset used for the implicit function evaluation. If more than
-  // one dataset is added, the evaluation point is searched in all until a 
-  // match is found. THIS FUNCTION DOES NOT CHANGE THE REFERENCE COUNT OF 
-  // DATASET FOR THREAD SAFETY REASONS.
-  virtual void AddDataSet( vtkDataSet * dataset );
-#endif
-  
   vtkGetObjectMacro(TimeStepsTable,vtkTable);
   virtual void SetTimeStepsTable(vtkTable*);
 
@@ -107,22 +83,16 @@ public:
   vtkSetStringMacro(Component2Prefix);
   vtkGetStringMacro(Component2Prefix);
 
-#if (VTK_MAJOR_VERSION <= 5)
-  // Description:
-  // Evaluate the velocity field f at point (x, y, z, t).
-  virtual int FunctionValues( double * x, double * f ) VTK_OVERRIDE;
-#endif
-  
   // Description:
   // Set the cell id cached by the last evaluation within a specified dataset.
-  virtual void SetLastCellId( vtkIdType c, int dataindex ) VTK_OVERRIDE;
+  virtual void SetLastCellId( vtkIdType c, int dataindex ) override;
   
   // Description:
   // Set the cell id cached by the last evaluation.
-  virtual void SetLastCellId( vtkIdType c ) VTK_OVERRIDE
+  virtual void SetLastCellId( vtkIdType c ) override
     { this->Superclass::SetLastCellId( c ); }
 
-  virtual void CopyParameters( vtkAbstractInterpolatedVelocityField * from ) VTK_OVERRIDE;
+  virtual void CopyParameters( vtkAbstractInterpolatedVelocityField * from ) override;
 
 protected:
   vtkvmtkStaticTemporalInterpolatedVelocityField();
@@ -134,7 +104,7 @@ protected:
   // locating the next cell (for datasets of type vtkPointSet) or simply
   // invoking vtkImageData/vtkRectilinearGrid::FindCell() to fulfill the same
   // task if the point is outside the current cell.
-  virtual int FunctionValues( vtkDataSet * ds, double * x, double * f ) VTK_OVERRIDE;
+  virtual int FunctionValues( vtkDataSet * ds, double * x, double * f ) override;
 
   void FindTimeRowId(double time, int& prevRowId, int& nextRowId, double& p);
 
@@ -152,9 +122,7 @@ protected:
   char* Component0Prefix;
   char* Component1Prefix;
   char* Component2Prefix;
-#if (VTK_MAJOR_VERSION > 5)
   int LastDataSetIndex;
-#endif
 
 private:
   vtkvmtkStaticTemporalInterpolatedVelocityField

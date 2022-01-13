@@ -198,8 +198,10 @@ int vtkvmtkSteepestDescentShooter::RequestData(
 
   vtkIdType i, j, k, h, l, m;
   vtkIdType poleId;
-  vtkIdType npts, *pts, targetNpts, *targetPts, *cells;
-  unsigned short ncells;
+  vtkIdType npts, targetNpts, *cells;
+  const vtkIdType *pts;
+  const vtkIdType *targetPts;
+  vtkIdType ncells;
 
   if (!this->DescentArrayName)
     {
@@ -326,7 +328,7 @@ int vtkvmtkSteepestDescentShooter::RequestData(
   return 1;
 }
 
-void vtkvmtkSteepestDescentShooter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSteepestDescentShooter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -32,6 +32,7 @@ Version:   $Revision: 1.6 $
 #include "vtkThinPlateSplineTransform.h"
 #include "vtkPoints.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkMath.h"
 #include "vtkTriangle.h"
 #include "vtkVersion.h"
@@ -108,11 +109,7 @@ int vtkvmtkSmoothCapPolyData::RequestData(
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  boundaryExtractor->SetInput(input);
-#else
   boundaryExtractor->SetInputData(input);
-#endif
   boundaryExtractor->Update();
 
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
@@ -290,7 +287,7 @@ int vtkvmtkSmoothCapPolyData::RequestData(
   return 1;
 }
 
-void vtkvmtkSmoothCapPolyData::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSmoothCapPolyData::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

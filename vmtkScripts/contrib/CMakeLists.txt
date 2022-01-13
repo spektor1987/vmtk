@@ -8,6 +8,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkentityextractor.py
     vmtkentitylist.py
     vmtkentityrenumber.py
+    vmtkendpointsections.py
     vmtkgeodesicsurfaceresolution.py
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
@@ -44,6 +45,11 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfaceextractannularwalls.py
     vmtksurfaceextractinnercylinder.py
     vmtkthreshold.py
+    vmtkmeshmerge.py
+    vmtkentityrenumber.py
+    vmtkpeterresurface.py
+    vmtkpetergeneratesurface.py
+    vmtkpetersurfaceclipper.py 
   )
   
 set(CONTRIB_MODULE_SRCS
@@ -52,15 +58,15 @@ set(CONTRIB_MODULE_SRCS
 
 if(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR)
   set(VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR bin)
-endif(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR)
+endif()
 
 if(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR)
   set(VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
-endif(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR)
+endif()
 
 foreach (SCRIPT_FILE  ${CONTRIB_SCRIPTS_SRCS})
   configure_file(${VMTK_CONTRIB_SCRIPTS_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_CONTRIB_SCRIPTS_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
-endforeach (SCRIPT_FILE)
+endforeach ()
 
 install(FILES ${CONTRIB_SCRIPTS_SRCS} ${CONTRIB_MODULE_SRCS}
   DESTINATION ${VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR}
@@ -73,11 +79,11 @@ foreach (SCRIPT_FILE  ${CONTRIB_SCRIPTS_SRCS})
   string(REGEX REPLACE ".py$" "" STRIPPED_SCRIPT_FILE ${SCRIPT_FILE})
   configure_file(${PYPES_SOURCE_DIR}/pyperun.py ${VMTK_CONTRIB_SCRIPTS_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
   set (CONTRIB_STRIPPED_SCRIPTS_SRCS ${CONTRIB_STRIPPED_SCRIPTS_SRCS} ${VMTK_CONTRIB_SCRIPTS_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
-endforeach (SCRIPT_FILE)
+endforeach ()
 
 install(PROGRAMS ${CONTRIB_STRIPPED_SCRIPTS_SRCS}
   DESTINATION ${VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR}
   COMPONENT RuntimeExecutables)
 
-endif (NOT WIN32 AND NOT VMTK_MINIMAL_INSTALL)
+endif ()
 

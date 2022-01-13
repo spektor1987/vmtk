@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -33,6 +33,7 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.OwnRenderer = 0
         self.Display = 1
         self.ArrayName = ''
+        self.SeedRGBColor = [1.0, 0.0, 0.0] # red by default
 
         self.Picker = None
         self.PlaneWidgetX = None
@@ -54,6 +55,7 @@ class vmtkImageSeeder(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Display','display','bool',1,'','toggle rendering'],
             ['KeepSeeds','keepseeds','bool',1,'','toggle avoid removal of seeds from renderer'],
+            ['SeedRGBColor','seedcolor','float',3,'(0.0,1.0)','RGB Values to set the color of the seed to. red by default'],
             ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes']
             ])
         self.SetOutputMembers([
@@ -76,7 +78,7 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.Seeds.GetPoints().InsertNextPoint(point)
         self.Seeds.Modified()
         self.vmtkRenderer.RenderWindow.Render()
-        
+
     def WidgetsOn(self):
         self.PlaneWidgetX.On()
         self.PlaneWidgetY.On()
@@ -109,7 +111,7 @@ class vmtkImageSeeder(pypes.pypeScript):
         else:
             self.PlaneWidgetX.DisplayTextOff()
         self.PlaneWidgetX.KeyPressActivationOff()
-        
+
 #        self.PlaneWidgetY.SetResliceInterpolateToNearestNeighbour()
         self.PlaneWidgetY.SetResliceInterpolateToLinear()
         self.PlaneWidgetY.SetTextureInterpolate(self.TextureInterpolation)
@@ -146,7 +148,9 @@ class vmtkImageSeeder(pypes.pypeScript):
         glyphMapper.SetInputConnection(glyphs.GetOutputPort())
         self.SeedActor = vtk.vtkActor()
         self.SeedActor.SetMapper(glyphMapper)
-        self.SeedActor.GetProperty().SetColor(1.0,0.0,0.0)
+        self.SeedActor.GetProperty().SetColor(self.SeedRGBColor[0],
+                                              self.SeedRGBColor[1],
+                                              self.SeedRGBColor[2])
         self.vmtkRenderer.Renderer.AddActor(self.SeedActor)
 
         self.WidgetsOn()
@@ -155,7 +159,6 @@ class vmtkImageSeeder(pypes.pypeScript):
             self.vmtkRenderer.AddKeyBinding('Ctrl','Add Seed.')
 
             self.vmtkRenderer.Render()
-
 
     def Execute(self):
         if (self.Image == None) & (self.Display == 1):
@@ -166,7 +169,7 @@ class vmtkImageSeeder(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         ##self.PrintLog('Ctrl +  left click to add seed.')
         self.Picker = vtk.vtkCellPicker()
@@ -189,7 +192,7 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.InitializeSeeds()
 
         self.BuildView()
-        
+
         self.WidgetsOff()
 
         if not self.KeepSeeds:
@@ -197,6 +200,7 @@ class vmtkImageSeeder(pypes.pypeScript):
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

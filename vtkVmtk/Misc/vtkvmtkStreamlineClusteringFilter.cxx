@@ -76,11 +76,7 @@ int vtkvmtkStreamlineClusteringFilter::RequestData(
   int numberOfClusters = 4;
 
   vtkSplineFilter* splineFilter = vtkSplineFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  splineFilter->SetInput(input);
-#else
   splineFilter->SetInputData(input);
-#endif
   splineFilter->SetSubdivideToLength();
   splineFilter->SetLength(resampleLength);
   splineFilter->Update();
@@ -261,7 +257,7 @@ int vtkvmtkStreamlineClusteringFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkStreamlineClusteringFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkStreamlineClusteringFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

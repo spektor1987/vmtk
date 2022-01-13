@@ -515,11 +515,7 @@ int vtkvmtkActiveTubeFilter::RequestData(vtkInformation *vtkNotUsed(request), vt
     }
 
   vtkImageGradient* gradientFilter = vtkImageGradient::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  gradientFilter->SetInput(this->PotentialImage);
-#else
   gradientFilter->SetInputData(this->PotentialImage);
-#endif
   gradientFilter->SetDimensionality(3);
   gradientFilter->Update();
 
@@ -551,7 +547,7 @@ int vtkvmtkActiveTubeFilter::RequestData(vtkInformation *vtkNotUsed(request), vt
   return 1;
 }
 
-void vtkvmtkActiveTubeFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkActiveTubeFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

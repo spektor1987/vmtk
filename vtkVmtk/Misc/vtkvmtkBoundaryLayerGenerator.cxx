@@ -194,7 +194,8 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     outputPoints->SetPoint(i,point);
     }
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkIdType *surfacePts;
 
   if (this->IncludeSurfaceCells)
@@ -864,7 +865,8 @@ void vtkvmtkBoundaryLayerGenerator::IncrementalWarpPoints(vtkUnstructuredGrid* i
     warpedPoints->SetPoint(i,warpedPoint);
     }
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkIdList* cellIds = vtkIdList::New();
   vtkIdType cellId;
 
@@ -943,7 +945,7 @@ void vtkvmtkBoundaryLayerGenerator::IncrementalWarpPoints(vtkUnstructuredGrid* i
   neighborIds->Delete();
 }
 
-void vtkvmtkBoundaryLayerGenerator::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkBoundaryLayerGenerator::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

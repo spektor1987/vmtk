@@ -141,7 +141,8 @@ void vtkvmtkFDNEUTWriter::WriteData()
       }
 
     int fdneutElementType, fdneutElementGeometry, numberOfNodesInElement;
-    vtkIdType npts, *pts, *cellPoints;
+    vtkIdType npts, *cellPoints;
+    const vtkIdType *pts;
     fdneutElementType = -1;
     fdneutElementGeometry = -1;
 
@@ -404,7 +405,7 @@ void vtkvmtkFDNEUTWriter::WriteData()
   fclose(FDNEUTFile);
 }
 
-void vtkvmtkFDNEUTWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkFDNEUTWriter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkUnstructuredGridWriter::PrintSelf(os,indent);
 }

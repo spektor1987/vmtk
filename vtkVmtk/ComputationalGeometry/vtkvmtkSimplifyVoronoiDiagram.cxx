@@ -93,27 +93,30 @@ vtkIdType vtkvmtkSimplifyVoronoiDiagram::IsBoundaryEdge(vtkCellLinks* links, vtk
 }
 
 int vtkvmtkSimplifyVoronoiDiagram::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
+  vtkPolyData* input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   bool anyRemoved, removeCell, considerPoint;
   bool* isUnremovable;
   vtkIdType i, j, id;
   vtkIdType n;
-  vtkIdType npts, *pts, ncells;
+  vtkIdType npts, ncells;
+  const vtkIdType *pts;
+  vtkPolyData* poly = vtkPolyData::New();
+  poly->SetPoints(input->GetPoints());
   npts = 0;
   pts = NULL;
   vtkIdType edge[2];
-  vtkCellArray *currentPolys;
+  vtkCellArray* currentPolys;
   vtkCellLinks* currentLinks;
   vtkIdType newCellId;
   vtkCellArray* inputPolys = input->GetPolys();
@@ -182,7 +185,17 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   currentPolys->DeepCopy(inputPolys);
 
   currentLinks->Allocate(input->GetNumberOfPoints());
-  currentLinks->BuildLinks(input,currentPolys);
+
+  // Reworking cell links classes for performance and consistent API
+  // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
+  // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  // if (true)
+  //   {
+  //   vtkErrorMacro(<< "vtkvmtkSimplifyVoronoiDiagram::RequestData is not functionnal when built against VTK >= 9");
+  //   return 0;
+  //   }
+  poly->SetPolys(currentPolys);
+  currentLinks->BuildLinks(poly);
 
   anyRemoved = true;
   while (anyRemoved)
@@ -271,7 +284,13 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     currentLinks->Delete();
     currentLinks = vtkCellLinks::New();
     currentLinks->Allocate(input->GetNumberOfPoints());
-    currentLinks->BuildLinks(input,currentPolys);
+
+    // Reworking cell links classes for performance and consistent API
+    // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
+    // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+    // vtkErrorMacro(<< "!");
+    poly->SetPolys(currentPolys);
+    currentLinks->BuildLinks(poly);
 
     newPolys->Delete();
     newCell->Delete();
@@ -313,6 +332,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     }
 
   // simply passes points and point data (eventually vtkCleanPolyData)
+  // will have less cells but same points
   output->SetPoints(input->GetPoints());
   output->GetPointData()->PassData(input->GetPointData());
 
@@ -321,12 +341,12 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
 
   currentLinks->Delete();
   currentPolys->Delete();
-  delete[] isUnremovable;
+  poly->Delete();
 
   return 1;
 }
 
-void vtkvmtkSimplifyVoronoiDiagram::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSimplifyVoronoiDiagram::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

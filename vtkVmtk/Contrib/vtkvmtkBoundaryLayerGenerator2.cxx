@@ -33,6 +33,7 @@
 #include "vtkCellArray.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
+#include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -162,7 +163,9 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
     outputPoints->SetPoint(i,point);
     }
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
+
   vtkIdType *surfacePts;
 
   if (this->IncludeSurfaceCells || this->IncludeOriginalSurfaceCells)
@@ -250,21 +253,13 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
       
       //First convert the unstructured grid to poly data
       vtkGeometryFilter *meshToSurface = vtkGeometryFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-      meshToSurface->SetInput(input);
-#else
       meshToSurface->SetInputData(input);
-#endif
       meshToSurface->MergingOff();
       meshToSurface->Update();
       
       //Extract the open profiles
       vtkvmtkPolyDataBoundaryExtractor *openProfilesExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-#if (VTK_MAJOR_VERSION <= 5)
-      openProfilesExtractor->SetInput(meshToSurface->GetOutput());
-#else
       openProfilesExtractor->SetInputData(meshToSurface->GetOutput());
-#endif
       openProfilesExtractor->Update();
               
       //Update the openProfilesIdsArray
@@ -272,7 +267,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
       vtkDataArray *openProfilesScalars = openProfilesExtractor->GetOutput()->GetPointData()->GetScalars();
       
       vtkIdType npts = 0;
-      vtkIdType *pts = NULL;
+      const vtkIdType *pts = NULL;
       int profileId;
       for (profileId=0, openProfiles->InitTraversal(); openProfiles->GetNextCell(npts,pts); profileId++)
         {
@@ -305,8 +300,8 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
    
     vtkIdType prismNPts, *prismPts;
     vtkIdType nTetraPts = 0;
-    vtkIdType *tetraPts = NULL;
-    
+    const vtkIdType *tetraPts = NULL;
+
     for (i=0; i<numberOfInputCells; i++)
       {
       input->GetCellPoints(i,npts,pts);
@@ -548,7 +543,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
   return 1;
 }
 
-void vtkvmtkBoundaryLayerGenerator2::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkBoundaryLayerGenerator2::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -38,6 +38,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkMath.h"
 #include "vtkvmtkCenterlineSphereDistance.h"
 #include "vtkProbeFilter.h"
+#include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -378,22 +379,14 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
         plane->SetNormal(tangent);
     
         vtkCutter* cutter = vtkCutter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-        cutter->SetInput(input);
-#else
         cutter->SetInputData(input);
-#endif
         cutter->SetCutFunction(plane);
         cutter->GenerateCutScalarsOff();
         cutter->SetValue(0,0.0);
         cutter->Update();
     
         vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
-#if (VTK_MAJOR_VERSION <= 5)
-        cleaner->SetInput(cutter->GetOutput());
-#else
         cleaner->SetInputConnection(cutter->GetOutputPort());
-#endif
         cleaner->Update();
     
         if (cleaner->GetOutput()->GetNumberOfPoints() == 0)
@@ -405,11 +398,7 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
           }
     
         vtkPolyDataConnectivityFilter* connectivityFilter = vtkPolyDataConnectivityFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-        connectivityFilter->SetInput(cleaner->GetOutput());
-#else
         connectivityFilter->SetInputConnection(cleaner->GetOutputPort());
-#endif
         connectivityFilter->SetExtractionModeToClosestPointRegion();
         connectivityFilter->SetClosestPoint(point);
         connectivityFilter->Update();
@@ -458,22 +447,13 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
         this->CreateTransform(transform,currentOrigin,currentNormal,currentUpNormal,targetOrigin,targetNormal,targetUpNormal);
 
         vtkTransformPolyDataFilter* transformFilter = vtkTransformPolyDataFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-        transformFilter->SetInput(this->SectionSource);
-#else
         transformFilter->SetInputData(this->SectionSource);
-#endif
         transformFilter->SetTransform(transform);
         transformFilter->Update();
 
         vtkProbeFilter* probeFilter = vtkProbeFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-        probeFilter->SetInput(transformFilter->GetOutput());
-        probeFilter->SetSource(input);
-#else
         probeFilter->SetInputConnection(transformFilter->GetOutputPort());
         probeFilter->SetSourceData(input);
-#endif
         probeFilter->Update();
 
         section->DeepCopy(probeFilter->GetOutput());
@@ -498,11 +478,7 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
 
       if (!this->TransformSections)
         {
-#if (VTK_MAJOR_VERSION <= 5)
-        appendFilter->AddInput(section);
-#else
         appendFilter->AddInputData(section);
-#endif
 
         vtkIdType pointId = sectionPointsPoints->InsertNextPoint(point);
         sectionPointsVerts->InsertNextCell(1);
@@ -560,19 +536,11 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
         this->CreateTransform(transform,currentOrigin,currentNormal,currentUpNormal,targetOrigin,targetNormal,targetUpNormal);
 
         vtkTransformPolyDataFilter* transformFilter = vtkTransformPolyDataFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-        transformFilter->SetInput(section);
-#else
         transformFilter->SetInputData(section);
-#endif
         transformFilter->SetTransform(transform);
         transformFilter->Update();
 
-#if (VTK_MAJOR_VERSION <= 5)
-        appendFilter->AddInput(transformFilter->GetOutput());
-#else
         appendFilter->AddInputConnection(transformFilter->GetOutputPort());
-#endif
 
         vtkIdType pointId = sectionPointsPoints->InsertNextPoint(targetOrigin);
         sectionPointsVerts->InsertNextCell(1);
@@ -618,7 +586,7 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
   return 1;
 }
 
-void vtkvmtkUnstructuredGridCenterlineSections::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkUnstructuredGridCenterlineSections::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

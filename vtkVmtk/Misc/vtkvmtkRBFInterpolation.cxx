@@ -183,11 +183,7 @@ void vtkvmtkRBFInterpolation::EvaluateGradient(double x[3], double n[3])
   vtkWarningMacro("RBF gradient computation not implemented.");
 }
 
-#ifdef VTK_HAS_MTIME_TYPE
 vtkMTimeType vtkvmtkRBFInterpolation::GetMTime()
-#else
-unsigned long vtkvmtkRBFInterpolation::GetMTime()
-#endif
 {
   unsigned long mTime=this->Superclass::GetMTime();
   unsigned long sourceMTime;
@@ -201,7 +197,7 @@ unsigned long vtkvmtkRBFInterpolation::GetMTime()
   return mTime;
 }
 
-void vtkvmtkRBFInterpolation::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkRBFInterpolation::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

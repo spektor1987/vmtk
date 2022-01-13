@@ -28,9 +28,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkVersion.h"
-#if (VTK_MAJOR_VERSION > 5)
 #include "vtkInterpolatedVelocityField.h"
-#endif
 
 #include "vtkvmtkStaticTemporalInterpolatedVelocityField.h"
 
@@ -198,11 +196,7 @@ int vtkvmtkStaticTemporalStreamTracer::CheckInputs(vtkAbstractInterpolatedVeloci
         {
         *maxCellSize = cellSize;
         }
-#if (VTK_MAJOR_VERSION <= 5)
-      vtkAbstractInterpolatedVelocityField::SafeDownCast(func)->AddDataSet(inp);
-#else
       vtkInterpolatedVelocityField::SafeDownCast(func)->AddDataSet(inp);
-#endif
       numInputs++;
       }
     iterP->GoToNextItem();
@@ -801,7 +795,7 @@ void vtkvmtkStaticTemporalStreamTracer::Integrate(vtkDataSet *input0,
   return;
 }
 
-void vtkvmtkStaticTemporalStreamTracer::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkStaticTemporalStreamTracer::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

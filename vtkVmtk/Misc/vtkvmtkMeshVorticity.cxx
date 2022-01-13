@@ -88,11 +88,7 @@ int vtkvmtkMeshVorticity::RequestData(
   char gradientArrayName[] = "VelocityGradient";
 
   vtkvmtkUnstructuredGridGradientFilter* gradientFilter = vtkvmtkUnstructuredGridGradientFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  gradientFilter->SetInput(input);
-#else
   gradientFilter->SetInputData(input);
-#endif
   gradientFilter->SetInputArrayName(this->VelocityArrayName);
   gradientFilter->SetGradientArrayName(gradientArrayName);
   gradientFilter->SetQuadratureOrder(this->QuadratureOrder);
@@ -137,7 +133,7 @@ int vtkvmtkMeshVorticity::RequestData(
   return 1;
 }
 
-void vtkvmtkMeshVorticity::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkMeshVorticity::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

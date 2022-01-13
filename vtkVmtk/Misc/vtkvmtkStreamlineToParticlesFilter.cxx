@@ -131,11 +131,7 @@ int vtkvmtkStreamlineToParticlesFilter::RequestData(
     double injectionOffset = this->InjectionStart + i * (this->InjectionEnd - this->InjectionStart) / this->NumberOfInjections;
 
     vtkMaskPolyData* mask = vtkMaskPolyData::New();
-#if (VTK_MAJOR_VERSION <= 5)
-    mask->SetInput(input);
-#else
     mask->SetInputData(input);
-#endif
     mask->SetOnRatio(numberOfCells/this->NumberOfParticlesPerInjection);
     mask->SetOffset(i);
     mask->Update();
@@ -224,7 +220,7 @@ int vtkvmtkStreamlineToParticlesFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkStreamlineToParticlesFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkStreamlineToParticlesFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

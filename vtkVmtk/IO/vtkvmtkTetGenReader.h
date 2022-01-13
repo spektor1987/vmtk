@@ -31,22 +31,28 @@ Version:   Revision: 1.0
 
 #include <vector>
 
+// VTK_FILEPATH hint was introduced in VTK_VERSION_CHECK(9,1,0)
+// (https://github.com/Kitware/VTK/commit/c30ddf9a6caedd65ae316080b0efd1833983844e)
+#ifndef VTK_FILEPATH
+#define VTK_FILEPATH
+#endif
+
 class VTK_VMTK_IO_EXPORT vtkvmtkTetGenReader : public vtkUnstructuredGridReader
 {
 public:
   vtkTypeMacro(vtkvmtkTetGenReader,vtkUnstructuredGridReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkTetGenReader *New();
 
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
 
+  int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
+
 protected:
   vtkvmtkTetGenReader();
   ~vtkvmtkTetGenReader();
-
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
 //BTX
   void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);

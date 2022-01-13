@@ -49,7 +49,8 @@ vtkvmtkPolyDataScissors::~vtkvmtkPolyDataScissors()
 
 int vtkvmtkPolyDataScissors::IsEdgeInCell(vtkPolyData *input, vtkIdType edgePointId0, vtkIdType edgePointId1, vtkIdType cellId)
 {
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkIdType i;
 
   input->GetCellPoints(cellId,npts,pts);
@@ -68,10 +69,11 @@ int vtkvmtkPolyDataScissors::IsEdgeInCell(vtkPolyData *input, vtkIdType edgePoin
 int vtkvmtkPolyDataScissors::GetCellsOnSameSide(vtkPolyData* input, vtkIdType targetCellId0, vtkIdType targetCellId1, vtkIdType referenceCellId, vtkIdType linePointId0, vtkIdType linePointId1, vtkIdType linePointId2, vtkIdList *cellsOnSameSide)
 {
   vtkIdType i, j;
-  unsigned short ncells;
   vtkIdType *cells;
   vtkIdType previousCellId;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
+  vtkIdType ncells;
   vtkIdType edge[2];
   bool done;
 
@@ -165,7 +167,8 @@ int vtkvmtkPolyDataScissors::RequestData(
   vtkIdType duplicatePointLocation;
   vtkIdType numberOfLines, numberOfLinePoints, numberOfInputPoints;
   vtkIdType cellId, previousCellToEdit;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   vtkDataArray *cutLinePointIdsArray;
   vtkCell *polyLine;
   vtkPoints *newPoints;
@@ -392,7 +395,7 @@ int vtkvmtkPolyDataScissors::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataScissors::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataScissors::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

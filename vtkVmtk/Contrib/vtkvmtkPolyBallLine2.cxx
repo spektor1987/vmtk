@@ -230,7 +230,7 @@ void vtkvmtkPolyBallLine2::EvaluateGradient(double x[3], double n[3])
   // TODO
 }
 
-void vtkvmtkPolyBallLine2::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyBallLine2::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -293,11 +293,7 @@ void vtkvmtkPolyBallLine2::BuildLocator()
     }
     
   //Triangulate the input for improved performance
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Triangulator->SetInput(this->LocalInput);
-#else
   this->Triangulator->SetInputData(this->LocalInput);
-#endif
   this->Triangulator->Update();
   this->TriangulatedInput = this->Triangulator->GetOutput();
   

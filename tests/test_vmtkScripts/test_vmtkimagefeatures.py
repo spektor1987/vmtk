@@ -22,7 +22,6 @@ import vmtk.vmtkimagefeatures as imagefeatures
 @pytest.mark.parametrize("featureType,paramid", [
     ("vtkgradient", '0'),
     ("gradient", '1'),
-    ("upwind", '2'),
 ])
 def test_features_types(aorta_image, compare_images, featureType, paramid, write_image):
     name = __name__ + '_test_features_types_' + paramid + '.mha'
@@ -35,10 +34,36 @@ def test_features_types(aorta_image, compare_images, featureType, paramid, write
 
 
 @pytest.mark.parametrize("featureType,paramid", [
+    ("upwind", '2'),
+])
+def test_features_types_upwind(aorta_image, compare_images, featureType, paramid, write_image):
+    name = __name__ + '_test_features_types_' + paramid + '.mha'
+    featurer = imagefeatures.vmtkImageFeatures()
+    featurer.Image = aorta_image
+    featurer.FeatureImageType = featureType
+    featurer.Execute()
+
+    assert compare_images(featurer.Image, name) == True
+
+
+@pytest.mark.parametrize("featureType,paramid", [
     ("gradient", '0'),
+])
+def test_sigmoid_on_for_gradient(aorta_image, compare_images, featureType, paramid, write_image):
+    name = __name__ + '_test_sigmoid_on_for_gradient_and_upwind_' + paramid + '.mha'
+    featurer = imagefeatures.vmtkImageFeatures()
+    featurer.Image = aorta_image
+    featurer.FeatureImageType = featureType
+    featurer.SigmoidRemapping = 1
+    featurer.Execute()
+
+    assert compare_images(featurer.Image, name) == True
+
+
+@pytest.mark.parametrize("featureType,paramid", [
     ("upwind", '1'),
 ])
-def test_sigmoid_on_for_gradient_and_upwind(aorta_image, compare_images, featureType, paramid, write_image):
+def test_sigmoid_on_for_upwind(aorta_image, compare_images, featureType, paramid, write_image):
     name = __name__ + '_test_sigmoid_on_for_gradient_and_upwind_' + paramid + '.mha'
     featurer = imagefeatures.vmtkImageFeatures()
     featurer.Image = aorta_image
@@ -80,5 +105,3 @@ def test_upwind_factor_values_for_upwind(aorta_image, compare_images, upwindValu
     assert compare_images(featurer.Image, name) == True
 
 #TODO: Add test for dimensionality
-
-

@@ -101,10 +101,8 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
         break;
       case VTK_QUAD:
       case VTK_QUADRATIC_QUAD:
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
       case VTK_QUADRATIC_LINEAR_QUAD:
       case VTK_BIQUADRATIC_QUAD:
-#endif
         for (j=0; j<4; j++)
           {
           pointId = cellPoints->GetId(j);
@@ -129,10 +127,8 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
         break;
       case VTK_HEXAHEDRON:
       case VTK_QUADRATIC_HEXAHEDRON:
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
       case VTK_BIQUADRATIC_QUADRATIC_HEXAHEDRON:
       case VTK_TRIQUADRATIC_HEXAHEDRON:
-#endif
         for (j=0; j<8; j++)
           {
           pointId = cellPoints->GetId(j);
@@ -145,9 +141,7 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
         break;
       case VTK_WEDGE:
       case VTK_QUADRATIC_WEDGE:
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
       case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
-#endif
         for (j=0; j<6; j++)
           {
           pointId = cellPoints->GetId(j);
@@ -184,7 +178,7 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
   int numberOfOutputCells = outputCellArray->GetNumberOfCells();
   outputCellArray->InitTraversal();
   vtkIdType npts = 0;
-  vtkIdType *pts = NULL;
+  const vtkIdType *pts = NULL;
   for (i=0; i<numberOfOutputCells; i++)
     {
     outputCellArray->GetNextCell(npts,pts);
@@ -223,7 +217,7 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkLinearizeMeshFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkLinearizeMeshFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

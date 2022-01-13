@@ -186,11 +186,7 @@ int vtkvmtkPolyBallModeller::RequestData(
     }
 
   output->SetExtent(outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
-#if (VTK_MAJOR_VERSION <= 5)
-  output->AllocateScalars();
-#else
   output->AllocateScalars(outInfo);
-#endif
 
   vtkDoubleArray *functionArray = vtkDoubleArray::SafeDownCast(output->GetPointData()->GetScalars());
   functionArray->SetName(this->RadiusArrayName);
@@ -317,7 +313,7 @@ int vtkvmtkPolyBallModeller::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyBallModeller::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyBallModeller::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

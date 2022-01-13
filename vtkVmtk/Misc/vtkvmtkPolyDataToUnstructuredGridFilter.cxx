@@ -65,7 +65,8 @@ int vtkvmtkPolyDataToUnstructuredGridFilter::RequestData(
 
   int* cellTypes = new int[numberOfCells];
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   int cellType;
   for (int i=0; i<numberOfCells; i++)
     {
@@ -84,7 +85,7 @@ int vtkvmtkPolyDataToUnstructuredGridFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataToUnstructuredGridFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataToUnstructuredGridFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

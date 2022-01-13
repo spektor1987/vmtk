@@ -65,7 +65,7 @@ void vtkvmtkDolfinWriter2::WriteData()
     return;
     }
         
-  ofstream out (this->FileName);
+  std::ofstream out (this->FileName);
 
   if (!out.good())
     {
@@ -363,13 +363,14 @@ void vtkvmtkDolfinWriter2::GetDolfinCellFaceOrder(vtkCell* cell, vtkIdList *dolf
     }
   
   
+  const vtkIdType *faceArray;
   switch(cellType)
     {
     case VTK_TETRA:
       dolfinFaceOrder->SetNumberOfIds(4);
       for (int i=0; i<4; i++)
         {
-        int* faceArray = vtkTetra::GetFaceArray(i);
+        faceArray = vtkTetra::GetFaceArray(i);
         for (int j=0; j<4;j++)
           {
           bool inFaceArray = false;
@@ -396,7 +397,7 @@ void vtkvmtkDolfinWriter2::GetDolfinCellFaceOrder(vtkCell* cell, vtkIdList *dolf
   dolfinConnectivity->Delete();
 }
 
-void vtkvmtkDolfinWriter2::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkDolfinWriter2::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkUnstructuredGridWriter::PrintSelf(os,indent);
 }

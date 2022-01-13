@@ -34,6 +34,7 @@ Version:   $Revision: 1.6 $
 #include "vtkCellArray.h"
 #include "vtkGenericCell.h"
 #include "vtkEdgeTable.h"
+#include "vtkIdTypeArray.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkInformation.h"
@@ -427,7 +428,6 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
     vtkIdType newCellId;
 
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
     if (this->UseBiquadraticWedge)
       {
       newCellId = output->InsertNextCell(VTK_BIQUADRATIC_QUADRATIC_WEDGE, 18, pts);
@@ -436,9 +436,6 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       {
       newCellId = output->InsertNextCell(VTK_QUADRATIC_WEDGE, 15, pts);
       }
-#else
-    newCellId = output->InsertNextCell(VTK_QUADRATIC_WEDGE, 15, pts);
-#endif
 
     inputToOutputCellIds->SetId(cellId,newCellId);
     outputCellData->CopyData(inputCellData,cellId,newCellId);
@@ -1837,7 +1834,7 @@ bool vtkvmtkLinearToQuadraticMeshFilter::HasJacobianChangedSign(vtkCell* linearV
   return signChanged;
 }
 
-void vtkvmtkLinearToQuadraticMeshFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkLinearToQuadraticMeshFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

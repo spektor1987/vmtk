@@ -265,7 +265,7 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
 
       for (j=0; j<tetra->GetNumberOfPoints(); j++)
         {
-        unsigned short ncells;
+        vtkIdType ncells;
         vtkIdType* cells;
         this->Surface->GetPointCells(j,ncells,cells);
         double minEdgeLength = VTK_VMTK_LARGE_DOUBLE;
@@ -326,7 +326,7 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
   return 1;
 }
 
-void vtkvmtkInternalTetrahedraExtractor::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkInternalTetrahedraExtractor::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

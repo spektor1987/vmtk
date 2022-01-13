@@ -71,7 +71,8 @@ double vtkvmtkPolyBallLine::ComplexDot(double x[4], double y[4])
 double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
 {
   vtkIdType i, k;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
   double polyballFunctionValue, minPolyBallFunctionValue;
   double point0[3], point1[3];
   double radius0, radius1;
@@ -116,9 +117,6 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
     }
 
   this->Input->BuildCells();
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Input->Update();
-#endif
 
   minPolyBallFunctionValue = VTK_VMTK_LARGE_DOUBLE;
 
@@ -246,7 +244,7 @@ void vtkvmtkPolyBallLine::EvaluateGradient(double x[3], double n[3])
   // TODO
 }
 
-void vtkvmtkPolyBallLine::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyBallLine::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

@@ -26,6 +26,7 @@ Version:   $Revision: 1.6 $
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkPolyLine.h"
+#include "vtkIdTypeArray.h"
 #include "vtkIntArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
@@ -75,17 +76,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
     return 1;
     }
 
-  bool markCells = true;
-
-  if (!this->CellEntityIdsArrayName)
-    {
-    markCells = false;
-    }
-
-  if (strcmp(this->CellEntityIdsArrayName,"") == 0)
-    {
-    markCells = false;
-    }
+  bool markCells = this->CellEntityIdsArrayName && this->CellEntityIdsArrayName[0];
 
   input->BuildLinks();
 
@@ -113,11 +104,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  boundaryExtractor->SetInput(input);
-#else
   boundaryExtractor->SetInputData(input);
-#endif
   boundaryExtractor->Update();
 
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
@@ -165,7 +152,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
   return 1;
 }
 
-void vtkvmtkSimpleCapPolyData::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSimpleCapPolyData::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

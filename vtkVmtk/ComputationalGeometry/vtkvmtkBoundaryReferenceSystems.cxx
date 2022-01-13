@@ -184,9 +184,10 @@ void vtkvmtkBoundaryReferenceSystems::OrientBoundaryNormalOutwards(vtkPolyData* 
   surface->BuildCells();
   surface->BuildLinks();
 
-  unsigned short ncells;
   vtkIdType *cells;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  const vtkIdType *pts;
+  vtkIdType ncells;
 
   double boundaryPoint[3], neighborPoint[3];
 
@@ -318,11 +319,7 @@ int vtkvmtkBoundaryReferenceSystems::RequestData(
   point2Array->SetNumberOfComponents(3);
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  boundaryExtractor->SetInput(input);
-#else
   boundaryExtractor->SetInputData(input);
-#endif
 
   boundaryExtractor->Update();
 
@@ -376,7 +373,7 @@ int vtkvmtkBoundaryReferenceSystems::RequestData(
   return 1;
 }
 
-void vtkvmtkBoundaryReferenceSystems::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkBoundaryReferenceSystems::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

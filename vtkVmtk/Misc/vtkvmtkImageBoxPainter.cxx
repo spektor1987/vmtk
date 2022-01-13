@@ -23,10 +23,9 @@
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkVersion.h"
-#if (VTK_MAJOR_VERSION > 5)
 #include "vtkInformation.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#endif
+#include <cmath>
 
 vtkStandardNewMacro(vtkvmtkImageBoxPainter);
 
@@ -97,21 +96,17 @@ void vtkvmtkImageBoxPainter::SimpleExecute(vtkImageData* input,
 
   if (this->BoxDefinition == vtkvmtkImageBoxPainter::USE_BOUNDS)
     {
-    this->BoxExtent[0] = (vtkIdType) ceil(this->BoxBounds[0] / spacing[0]);
-    this->BoxExtent[1] = (vtkIdType) floor(this->BoxBounds[1] / spacing[0]);
-    this->BoxExtent[2] = (vtkIdType) ceil(this->BoxBounds[2] / spacing[1]);
-    this->BoxExtent[3] = (vtkIdType) floor(this->BoxBounds[3] / spacing[1]);
-    this->BoxExtent[4] = (vtkIdType) ceil(this->BoxBounds[4] / spacing[2]);
-    this->BoxExtent[5] = (vtkIdType) floor(this->BoxBounds[5] / spacing[2]);
+    this->BoxExtent[0] = (vtkIdType) std::ceil(this->BoxBounds[0] / spacing[0]);
+    this->BoxExtent[1] = (vtkIdType) std::floor(this->BoxBounds[1] / spacing[0]);
+    this->BoxExtent[2] = (vtkIdType) std::ceil(this->BoxBounds[2] / spacing[1]);
+    this->BoxExtent[3] = (vtkIdType) std::floor(this->BoxBounds[3] / spacing[1]);
+    this->BoxExtent[4] = (vtkIdType) std::ceil(this->BoxBounds[4] / spacing[2]);
+    this->BoxExtent[5] = (vtkIdType) std::floor(this->BoxBounds[5] / spacing[2]);
     }
 
   int extent[6];
-#if (VTK_MAJOR_VERSION <= 5)
-  input->GetWholeExtent(extent);
-#else
   vtkInformation *inInfoImage = this->GetInputPortInformation(0);
   inInfoImage->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
-#endif
 
   if ( this->BoxExtent[0] < extent[0] || this->BoxExtent[1] > extent[1] ||
        this->BoxExtent[2] < extent[2] || this->BoxExtent[3] > extent[3] ||

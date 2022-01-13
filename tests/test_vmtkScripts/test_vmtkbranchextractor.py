@@ -16,7 +16,7 @@
 
 import pytest
 import vmtk.vmtkbranchextractor as branchextractor
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
 
 
@@ -45,27 +45,29 @@ def test_number_of_cells(centerline_branches):
 
 def test_number_of_points(centerline_branches):
     assert centerline_branches.GetNumberOfPoints() == 417
-    
 
-@pytest.mark.parametrize("expectedname,paramid", [
-    ("CenterlineIds", 0),
-    ("TractIds", 1),
-    ("Blanking", 2),
-    ("GroupIds", 3)
+
+def test_cell_data_array_names(centerline_branches):
+    expected_array_names = [
+        "CenterlineIds",
+        "TractIds",
+        "Blanking",
+        "GroupIds",
+    ]
+    cell_data = centerline_branches.GetCellData()
+    array_names = [cell_data.GetArrayName(idx) for idx in range(cell_data.GetNumberOfArrays())]
+    assert sorted(expected_array_names) == sorted(array_names)
+
+
+@pytest.mark.parametrize("expectedvalue,paramname", [
+    ([0, 0, 0, 1, 1, 1], "CenterlineIds"),
+    ([0, 1, 2, 0, 1, 2], "TractIds"),
+    ([0, 1, 0, 0, 1, 0], "Blanking"),
+    ([0, 1, 2, 0, 1, 3], "GroupIds")
 ])
-def test_cell_data_array_names(centerline_branches, expectedname, paramid):
-    assert centerline_branches.GetCellData().GetArrayName(paramid) == expectedname
-
-
-@pytest.mark.parametrize("expectedvalue,paramid", [
-    ([0, 0, 0, 1, 1, 1], 0),
-    ([0, 1, 2, 0, 1, 2], 1),
-    ([0, 1, 0, 0, 1, 0], 2),
-    ([0, 1, 2, 0, 1, 3], 3)
-])
-def test_cell_data_array_values(centerline_branches, expectedvalue, paramid):
+def test_cell_data_array_values(centerline_branches, expectedvalue, paramname):
     centerline_branches_wrapped = dsa.WrapDataObject(centerline_branches)
-    assert centerline_branches_wrapped.CellData.GetArray(paramid).tolist() == expectedvalue
+    assert centerline_branches_wrapped.CellData.GetArray(paramname).tolist() == expectedvalue
 
 
 @pytest.mark.parametrize("expectedvalue,paramid", [
@@ -81,7 +83,7 @@ def test_number_of_points_per_cell(centerline_branches, expectedvalue, paramid):
     numberOfPoints = bcx.GetNumberOfPoints()
 
     assert numberOfPoints == expectedvalue
-    
+
 
 @pytest.mark.parametrize("expectedvalue,paramid", [
     (0, 0),
@@ -121,11 +123,11 @@ def test_cell_data_pointId_end_indices(centerline_branches, expectedvalue, numbe
     (288, 26, np.array([220.89038086, 140.92050171, 23.99687004]), np.array([218.53140259, 134.76171875, 24.90955925]), 4),
     (314, 103, np.array([218.53140259, 134.76171875, 24.90955925]), np.array([210.20037842, 103.04645538, 31.68768501]), 5)
 ])
-def test_cell_data_point_start_and_end_xyz_locations(centerline_branches, pointidstart, numberofpoints, 
+def test_cell_data_point_start_and_end_xyz_locations(centerline_branches, pointidstart, numberofpoints,
                                                      expectedlocationstart, expectedlocationend, paramid):
     bcx = centerline_branches.GetCell(paramid)
     bw = dsa.WrapDataObject(centerline_branches)
-    
+
     pointIdEnd = bcx.GetPointId(numberofpoints - 1)
     pointLocationEnd = bw.Points[pointIdEnd]
     pointLocationStart = bw.Points[pointidstart]

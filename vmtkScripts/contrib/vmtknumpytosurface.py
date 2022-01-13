@@ -28,6 +28,7 @@ try:
 except ImportError:
     raise ImportError('Unable to Import vmtknumpytosurface module, numpy is not installed')
 
+
 class vmtkNumpyToSurface(pypes.pypeScript):
 
     def __init__(self):
@@ -38,7 +39,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
 
         self.SetScriptName('vmtkNumpyToSurface')
         self.SetScriptDoc('Takes a nested python dictionary containing numpy arrays specifying vertex '
-                          'points, associated scalar data, and cell data specifying triangle connectivity' 
+                          'points, associated scalar data, and cell data specifying triangle connectivity'
                           'and returns a VTK triangulated surface vtkPolyData file')
         self.SetInputMembers([
             ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader']])
@@ -59,10 +60,10 @@ class vmtkNumpyToSurface(pypes.pypeScript):
         self.PrintLog('converting numpy array to surface')
         for pointKey in self.ArrayDict['PointData'].keys():
 
-            if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, float):
+            if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, np.floating):
                 pointDataArray = vtk.vtkFloatArray()
             else:
-                for checkDt in [int, np.uint8, np.uint16, np.uint32, np.uint64]:
+                for checkDt in [np.integer, np.uint8, np.uint16, np.uint32, np.uint64]:
                     if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, checkDt):
                         pointDataArray = vtk.vtkIntArray()
                         break
@@ -109,9 +110,9 @@ class vmtkNumpyToSurface(pypes.pypeScript):
 
             else:
 
-                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, float):
+                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, np.floating):
                     cellDataArray = vtk.vtkFloatArray()
-                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, int):
+                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, np.integer):
                     cellDataArray = vtk.vtkIntArray()
 
                 try:
@@ -136,6 +137,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
                     polyData.GetCellData().SetVectors(cellDataArray)
 
         self.Surface = polyData
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

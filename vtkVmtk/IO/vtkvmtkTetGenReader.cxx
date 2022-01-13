@@ -29,6 +29,7 @@ Version:   Revision: 1.0
 #include "vtkCellArray.h"
 #include "vtkUnsignedCharArray.h"
 #include "vtkUnstructuredGrid.h"
+#include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
@@ -71,43 +72,38 @@ void vtkvmtkTetGenReader::Tokenize(const std::string& str, std::vector<std::stri
     }
 }
 
-int vtkvmtkTetGenReader::RequestData(
-  vtkInformation *request,
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+int vtkvmtkTetGenReader::ReadMeshSimple(const std::string& fname,
+                                       vtkDataObject* doOutput)
 {
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
-    {
+  vtkDebugMacro(<<"Reading TetGen file...");
+
+  vtkUnstructuredGrid* output = vtkUnstructuredGrid::SafeDownCast(doOutput);
+
+  if(fname.empty())
+  {
+    vtkErrorMacro(<<"Input filename not set");
     return 1;
-    }
+  }
 
-  if (!this->GetFileName())
-    {
-    vtkErrorMacro(<<"FileName not set.");
-    return 1;
-    }
-
-  std::string nodeFileName = this->GetFileName();
+  std::string nodeFileName = fname;
   nodeFileName += ".node";
 
-  std::string eleFileName = this->GetFileName();
+  std::string eleFileName = fname;
   eleFileName += ".ele";
 
-  ifstream nodeStream(nodeFileName.c_str());
-  ifstream eleStream(eleFileName.c_str());
+  std::ifstream nodeStream(nodeFileName.c_str());
+  std::ifstream eleStream(eleFileName.c_str());
 
   if (!nodeStream.good())
     {
-    vtkErrorMacro(<<"Could not open .node file for reading.");
+    vtkErrorMacro(<<"Unable to open " << nodeFileName << " for reading");
     return 0;
     }
 
   if (!eleStream.good())
     {
-    vtkErrorMacro(<<"Could not open .ele file for reading.");
+    vtkErrorMacro(<<"Unable to open " << eleFileName << " for reading");
     return 0;
     }
 
@@ -291,7 +287,7 @@ int vtkvmtkTetGenReader::RequestData(
   return 1;
 }
 
-void vtkvmtkTetGenReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkTetGenReader::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 }

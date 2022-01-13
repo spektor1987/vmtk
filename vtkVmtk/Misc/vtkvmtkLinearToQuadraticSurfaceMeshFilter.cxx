@@ -56,7 +56,8 @@ int vtkvmtkLinearToQuadraticSurfaceMeshFilter::RequestData(
   vtkUnstructuredGrid *input = vtkUnstructuredGrid::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkIdType nqpts, *qpts, npts0, *pts0, npts1, *pts1;
+  vtkIdType nqpts, *qpts, npts0, npts1;
+  const vtkIdType *pts0, *pts1;
   vtkIdType numberOfInputCells;
   vtkPolyData* subdividedSurface;
   vtkCellArray* quadraticTriangles;
@@ -66,11 +67,7 @@ int vtkvmtkLinearToQuadraticSurfaceMeshFilter::RequestData(
   vtkInterpolatingSubdivisionFilter* subdivisionFilter;
 
   geometryFilter = vtkGeometryFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  geometryFilter->SetInput(input);
-#else
   geometryFilter->SetInputData(input);
-#endif
   geometryFilter->MergingOff();
 
   switch (this->SubdivisionMethod)
@@ -86,11 +83,7 @@ int vtkvmtkLinearToQuadraticSurfaceMeshFilter::RequestData(
       return 1;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  subdivisionFilter->SetInput(geometryFilter->GetOutput());
-#else
   subdivisionFilter->SetInputConnection(geometryFilter->GetOutputPort());
-#endif
   subdivisionFilter->SetNumberOfSubdivisions(1);
   subdivisionFilter->Update();
   
@@ -156,7 +149,7 @@ int vtkvmtkLinearToQuadraticSurfaceMeshFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkLinearToQuadraticSurfaceMeshFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkLinearToQuadraticSurfaceMeshFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
